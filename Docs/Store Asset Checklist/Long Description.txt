@@ -1,0 +1,23 @@
+Ironhollow is a one-mechanic platformer in which each jump, drop, and survival is dependent on your control of magnetism and polarity.
+Trapped within a decaying industrial complex, you wield the force of magnetism to alter between attraction and repulsion, avoiding deadly hallways filled with wobbly metal and unstable machinery.
+
+Tap once to flip your polarity — red repels, blue attracts. Each decision affects your motion, gravity, and world.
+Hazards, platforms, and enemies alike all react dynamically to your magnetic field, with frantic, physics-driven gameplay requiring timing and precision.
+
+With its system of procedural level stitching, every journey through Ironhollow's tunnels is unique, generating infinite combinations of factory rooms and enemy patrols. Survive, learn to cope with changes in polarity, and rise the leaderboard as you master the art of regulating the rhythm of attraction and repulsion.
+
+Crafted from the ground up with custom physics and Unity IL2CPP ARM64 optimization, Ironhollow sacrifices graphic flair for mastery of code — every movement is carefully crafted to be responsive, predictable, and satisfying on mobile.
+
+Features:
+
+New polarity-based platforming mechanic
+
+Hand-written magnetism and gravity physics
+
+Procedurally generated tunnel paths through the factory
+
+Several types of enemy and one boss battle
+
+Score run mode with instant replay
+
+Optimized for Android (IL2CPP, ARM64)

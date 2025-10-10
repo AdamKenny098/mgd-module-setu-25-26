@@ -1,0 +1,13 @@
+-- Ironhollow – Data Use & Privacy Statement --
+
+Ironhollow does not collect, share, or transmit any personal or device data.  
+All game data (high scores and settings) are stored locally on the player’s device using Unity’s PlayerPrefs system.
+
+No analytics SDKs, advertising libraries, or network calls are implemented in this version.  
+If published on Google Play in the future, Ironhollow would declare the following in the Data Safety section:
+- Data Collection: None
+- Data Sharing: None
+- Data Encryption: Not applicable (no transmission)
+- Data Retention: Local storage only
+
+This game operates fully offline.

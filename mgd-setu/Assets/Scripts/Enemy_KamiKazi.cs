@@ -97,6 +97,12 @@ public class EnemyKamikaze : MonoBehaviour, IMagnetic
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 3f);
         foreach (var hit in hits)
         {
+            if (hit.GetComponent<BossBombFactory>())
+            {
+                hit.GetComponent<BossBombFactory>().NotifyExplosion(transform.position);
+                continue;
+            }
+
 
             if (hit.CompareTag("Enemy") || hit.CompareTag("EnemyProjectile"))
             {

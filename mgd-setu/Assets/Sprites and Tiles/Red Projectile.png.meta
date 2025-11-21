@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4dacfcf5f6eb0bc45a03f802d6ad244a
+guid: 105fc1aa40a292e40948240a5f0c42ef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 84796250782908411
-    second: ChatGPT Image Nov 13, 2025, 12_43_54 PM_0
+      213: 6378870382692246967
+    second: ChatGPT Image Nov 20, 2025, 12_18_35 AM_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,10 +51,10 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 600
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
-  alphaUsage: 1
+  alphaUsage: 0
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChatGPT Image Nov 13, 2025, 12_43_54 PM_0
+      name: ChatGPT Image Nov 20, 2025, 12_18_35 AM_0
       rect:
         serializedVersion: 2
         x: 0
@@ -121,15 +121,37 @@ TextureImporter:
         width: 1024
         height: 1024
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
-      outline: []
+      outline:
+      - - {x: -414, y: 74}
+        - {x: -416, y: -45}
+        - {x: -401, y: -50}
+        - {x: -404, y: -85}
+        - {x: -345, y: -137}
+        - {x: -304, y: -146}
+        - {x: -287, y: -179}
+        - {x: -176, y: -179}
+        - {x: -175, y: -163}
+        - {x: -132, y: -147}
+        - {x: -87, y: -104}
+        - {x: -70, y: -76}
+        - {x: -48, y: -41}
+        - {x: -48, y: 53}
+        - {x: -63, y: 74}
+        - {x: -113, y: 145}
+        - {x: -153, y: 183}
+        - {x: -188, y: 202}
+        - {x: -291, y: 202}
+        - {x: -309, y: 168}
+        - {x: -346, y: 164}
+        - {x: -398, y: 84}
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bff3336adb14d2100800000000000000
-      internalID: 84796250782908411
+      spriteID: 7b5a1acf0dc468850800000000000000
+      internalID: 6378870382692246967
       vertices: []
       indices: 
       edges: []
@@ -138,7 +160,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 0a5215cf1ad556f4dbc3c5f3dddf5e7c
     internalID: 0
     vertices: []
     indices: 
@@ -146,9 +168,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":400.0,"y":400.0},"gridSpriteOffset":{"x":75.0,"y":300.0},"gridSpritePadding":{"x":50.0,"y":50.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":2,"spriteAlignment":0,"pivotUnitMode":1,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      ChatGPT Image Nov 13, 2025, 12_43_54 PM_0: 84796250782908411
+      ChatGPT Image Nov 20, 2025, 12_18_35 AM_0: 6378870382692246967
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 56d17f03-3e12-416f-a251-07a63c4595ed_0
+  m_Name: Red Tile
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 6614420327288309362, guid: 63271300a2fa5704f911eea7e1c28c28, type: 3}
+  m_Sprite: {fileID: -9248470, guid: 551f91c3ab1f44b4eb9beb2c1a0c5bc4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

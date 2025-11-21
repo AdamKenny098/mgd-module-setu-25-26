@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6426418342887750578
+--- !u!1 &9216294169526994607
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3239068891417353689}
-  - component: {fileID: 8302283151085201974}
-  - component: {fileID: 7655933444398613420}
-  - component: {fileID: 7999623163233922158}
-  m_Layer: 8
-  m_Name: Hazard_Spikes
-  m_TagString: Obstacle
+  - component: {fileID: 8355219157429596888}
+  - component: {fileID: 169846413693749491}
+  - component: {fileID: 4365886813871795284}
+  - component: {fileID: 2860588214887423302}
+  - component: {fileID: 9168157606711425218}
+  m_Layer: 12
+  m_Name: Blue Projectile
+  m_TagString: PlayerProjectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3239068891417353689
+--- !u!4 &8355219157429596888
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6426418342887750578}
+  m_GameObject: {fileID: 9216294169526994607}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.64, y: 0, z: 0}
+  m_LocalPosition: {x: -6.16, y: -0.23511168, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &8302283151085201974
+--- !u!212 &169846413693749491
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6426418342887750578}
+  m_GameObject: {fileID: 9216294169526994607}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -81,24 +82,51 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -3600226094467214917, guid: 5fe9d6bae24a87547a545f438fbc7c92, type: 3}
+  m_Sprite: {fileID: 6378870382692246967, guid: 5fd8089ad589954448b3c29fc8308034, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.98, y: 5.34}
+  m_Size: {x: 10.24, y: 10.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &7655933444398613420
-BoxCollider2D:
+--- !u!50 &4365886813871795284
+Rigidbody2D:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6426418342887750578}
+  m_GameObject: {fileID: 9216294169526994607}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 1
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
+  m_Constraints: 0
+--- !u!58 &2860588214887423302
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216294169526994607}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -126,27 +154,25 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.196, y: 1.068}
-    newSize: {x: 5.98, y: 5.34}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
---- !u!114 &7999623163233922158
+  m_Offset: {x: 0.4, y: 0}
+  m_Radius: 0.34133336
+--- !u!114 &9168157606711425218
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6426418342887750578}
+  m_GameObject: {fileID: 9216294169526994607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a2f0310888a63e4d8e63d56f6f8fef3, type: 3}
+  m_Script: {fileID: 11500000, guid: 388ebc0894a3c22449ab20a58b7f0fd1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagneticProjectile
+  source: 1
+  speed: 10
+  damage: 10
+  lifeTime: 4
+  canBeReflected: 1
+  magneticStrength: 8
+  maxMagneticDistance: 8
+  currentPolarity: 1

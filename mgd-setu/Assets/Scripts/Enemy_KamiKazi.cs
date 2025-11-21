@@ -97,6 +97,13 @@ public class EnemyKamikaze : MonoBehaviour, IMagnetic
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 3f);
         foreach (var hit in hits)
         {
+
+            if (hit.CompareTag("Enemy") || hit.CompareTag("EnemyProjectile"))
+            {
+                Destroy(hit.gameObject);
+                continue;
+            }
+
             Rigidbody2D body = hit.attachedRigidbody;
             if (body != null && body != rb)
                 body.AddForce((body.position - (Vector2)transform.position).normalized * explosionForce, ForceMode2D.Impulse);

@@ -19,6 +19,12 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
     PlayerInput playerInput;
     InputAction polarityAction;
 
+    [Header("Bounds")]
+    public float minY = -6f;
+    public float maxY =  6f;
+
+    public float maxSpeed;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -80,6 +86,13 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
 
     void FixedUpdate()
     {
+        // Kill player if they leave vertical bounds
+        if (transform.position.y < minY - 0.1f || transform.position.y > maxY + 0.1f)
+        {
+            GameManager.Instance.PlayerDied();
+            return;
+        }
+
         rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Force);
 
         var hits = Physics2D.OverlapCircleAll(transform.position, detectionRadius, magneticLayer);
@@ -88,6 +101,11 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
             IMagnetic other = hit.GetComponent<IMagnetic>();
             if (other != null && other != this)
                 other.ApplyMagneticForce(this);
+        }
+
+        if (rb.linearVelocity.magnitude > maxSpeed)
+        {
+            rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
         }
     }
 

@@ -186,7 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   detectionRange: 8
   diveSpeed: 8
-  currentPolarity: 1
+  currentPolarity: 0
   magneticStrength: 12
   explosionForce: 8
   explosionPrefab: {fileID: 0}

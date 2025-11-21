@@ -100,6 +100,14 @@ public class EnemyKamikaze : MonoBehaviour, IMagnetic
 
             if (hit.CompareTag("Enemy") || hit.CompareTag("EnemyProjectile"))
             {
+                // If it's a brute, ignore damage
+                if (hit.GetComponent<EnemyBrute>() != null)
+                {
+                    // Brutes do not take projectile damage
+                    Destroy(gameObject); // projectile dies but brute lives
+                    return;
+                }
+
                 Destroy(hit.gameObject);
                 continue;
             }

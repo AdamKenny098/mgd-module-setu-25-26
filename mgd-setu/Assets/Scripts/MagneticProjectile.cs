@@ -98,6 +98,15 @@ public class MagneticProjectile : MonoBehaviour, IMagnetic
         // Enemy gets hit (always valid now, per your choice B)
         if (col.CompareTag("Enemy"))
         {
+            // If it's a brute, ignore damage
+            if (col.GetComponent<EnemyBrute>() != null)
+            {
+                // Brutes do not take projectile damage
+                Destroy(gameObject); // projectile dies but brute lives
+                return;
+            }
+
+            // Normal enemy – kill both
             Destroy(col.gameObject);
             Destroy(gameObject);
             return;

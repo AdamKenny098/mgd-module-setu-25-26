@@ -6,6 +6,7 @@ public class TunnelSpawner : MonoBehaviour
     [Header("References")]
     public Transform player;
     public List<GameObject> segmentPrefabs;
+    public GameObject firstSegmentPrefab;
 
     [Header("Settings")]
     public int segmentsAhead = 6;
@@ -15,6 +16,7 @@ public class TunnelSpawner : MonoBehaviour
     private readonly Queue<GameObject> activeSegments = new();
     private float nextSpawnX = 0f;
     private bool isSpawning = false;
+    private bool firstSpawnDone = false;
 
     void Update()
     {
@@ -40,6 +42,7 @@ public class TunnelSpawner : MonoBehaviour
 
         isSpawning = true;
         nextSpawnX = 0f;
+        firstSpawnDone = false;
 
         // Warm-up a few segments
         for (int i = 0; i < segmentsAhead; i++)
@@ -61,7 +64,19 @@ public class TunnelSpawner : MonoBehaviour
 
     void SpawnSegment()
     {
-        var prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
+        GameObject prefab;
+
+        // First-ever segment spawn → use your chosen prefab
+        if (!firstSpawnDone && firstSegmentPrefab != null)
+        {
+            prefab = firstSegmentPrefab;
+            firstSpawnDone = true;
+        }
+        else
+        {
+            prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
+        }
+
         var newSeg = Instantiate(prefab, new Vector3(nextSpawnX, 0, 0), Quaternion.identity, transform);
         activeSegments.Enqueue(newSeg);
         nextSpawnX += segmentWidth;

@@ -11,7 +11,7 @@ public class EnemyBrute : MonoBehaviour
     public float wallCheckDistance = 0.2f;
 
     public LayerMask groundLayer; 
-    public LayerMask hazardLayer; // NEW
+    public LayerMask hazardLayer;
 
     private Rigidbody2D rb;
     private int direction = 1;

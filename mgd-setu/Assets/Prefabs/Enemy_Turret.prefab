@@ -194,6 +194,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f672cf62e1a954eb699d42e20b59f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyTurret
-  detectionRange: 21
-  fireRate: 1.25
+  detectionRange: 15
+  fireRate: 2.5
   projectilePrefab: {fileID: 5392257915661434075, guid: ba9e795658b07b5468bef09d44a9d7ff, type: 3}

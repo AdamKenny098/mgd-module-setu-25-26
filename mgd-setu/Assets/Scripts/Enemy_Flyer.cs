@@ -14,6 +14,9 @@ public class EnemyFlyer : MonoBehaviour
     private float nextFireTime;
     private float hoverOffset;
 
+    public float detectionRange = 10f;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -24,26 +27,31 @@ public class EnemyFlyer : MonoBehaviour
         player = FindFirstObjectByType<PlayerMagnetController>()?.transform;
     }
 
-    void FixedUpdate()
+        void FixedUpdate()
     {
         if (player == null) return;
 
-        // Hover effect
+        float dist = Vector2.Distance(transform.position, player.position);
+
+        // Don't move or shoot if too far
+        if (dist > detectionRange)
+            return;
+        
+        // Hover movement
         float hover = Mathf.Sin(Time.time * hoverSpeed + hoverOffset) * hoverAmount;
 
-        // Move slightly to maintain distance
         Vector2 dir = (player.position - transform.position).normalized;
         Vector2 targetPos = (Vector2)transform.position - dir * 0.5f + new Vector2(0, hover);
-
         rb.MovePosition(Vector2.Lerp(transform.position, targetPos, 0.15f));
 
-        // Fire bullets (deflectable)
+        // Fire bullets
         if (Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireInterval;
             Fire(dir);
         }
     }
+
 
     private void Fire(Vector2 dir)
     {

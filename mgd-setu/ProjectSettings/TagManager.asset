@@ -9,6 +9,8 @@ TagManager:
   - Obstacle
   - Explosion
   - EnemyProjectile
+  - PlayerProjectile
+  - CinemachineNotFoundInC#
   layers:
   - Default
   - TransparentFX

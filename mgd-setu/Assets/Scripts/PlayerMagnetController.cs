@@ -9,21 +9,20 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
 {
     public IMagnetic.Polarity CurrentPolarity { get; set; } = IMagnetic.Polarity.Red;
 
-    [Header("Movement Settings")]
-    public float moveSpeed = 1f; // Constant rightward push
+    [Header("Movement / Magnet Settings")]
     public float magneticStrength = 60f;
     public float detectionRadius = 8f;
     public LayerMask magneticLayer;
+    public float maxSpeed = 15f;
+
+    [Header("Bounds")]
+    public float minY = -6f;
+    public float maxY = 6f;
+    public float leftKillX = -2f; // if pushed too far left, die
 
     Rigidbody2D rb;
     PlayerInput playerInput;
     InputAction polarityAction;
-
-    [Header("Bounds")]
-    public float minY = -6f;
-    public float maxY =  6f;
-
-    public float maxSpeed;
 
     void Awake()
     {
@@ -36,7 +35,6 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
 
     void OnEnable()
     {
-        // get the action by name from the assigned asset
         polarityAction = playerInput.actions["Polarity"];
 
         if (polarityAction != null)
@@ -57,10 +55,8 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
 
     void OnPolarityPerformed(InputAction.CallbackContext ctx)
     {
-        // Ignore taps over UI
         if (IsPointerOverUI()) return;
         FlipPolarity();
-
     }
 
     bool IsPointerOverUI()
@@ -81,38 +77,48 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
         return hits.Count > 0;
     }
 
-    // No input polling here anymore
-    void Update() { }
-
     void FixedUpdate()
     {
-        // Kill player if they leave vertical bounds
-        if (transform.position.y < minY - 0.1f || transform.position.y > maxY + 0.1f)
+        var pos = rb.position;
+
+        // Kill if swept too far left by terrain
+        if (pos.x < leftKillX)
         {
             GameManager.Instance.PlayerDied();
             return;
         }
 
-        rb.AddForce(Vector2.right * moveSpeed, ForceMode2D.Force);
+        // Kill if out of vertical bounds
+        if (pos.y < minY - 0.1f || pos.y > maxY + 0.1f)
+        {
+            GameManager.Instance.PlayerDied();
+            return;
+        }
 
-        var hits = Physics2D.OverlapCircleAll(transform.position, detectionRadius, magneticLayer);
+        // Magnetic interaction
+        var hits = Physics2D.OverlapCircleAll(pos, detectionRadius, magneticLayer);
         foreach (var hit in hits)
         {
+            if (!hit) continue;
+
             IMagnetic other = hit.GetComponent<IMagnetic>();
             if (other != null && other != this)
                 other.ApplyMagneticForce(this);
         }
 
-        if (rb.linearVelocity.magnitude > maxSpeed)
-        {
-            rb.linearVelocity = rb.linearVelocity.normalized * maxSpeed;
-        }
+        // Clamp overall speed (mainly affects vertical)
+        var vel = rb.linearVelocity;
+        if (vel.magnitude > maxSpeed)
+            vel = vel.normalized * maxSpeed;
+
+        // We do NOT lock X here – let physics handle bumps, leftKillX handles crushes
+        rb.linearVelocity = vel;
     }
 
     public void ApplyMagneticForce(IMagnetic other)
     {
         Vector2 direction = (Vector2)(other.transform.position - transform.position);
-        direction.x = 0f; // vertical only
+        direction.x = 0f; //vertical only
 
         float polarityMultiplier = (CurrentPolarity == other.CurrentPolarity) ? -0.5f : 1f;
         rb.AddForce(direction.normalized * magneticStrength * polarityMultiplier, ForceMode2D.Force);

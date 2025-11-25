@@ -1224,7 +1224,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 2029215840}
-  UIManager: {fileID: 689475890}
+  UI: {fileID: 0}
+  tunnelSpawner: {fileID: 0}
+  startRunPosition: {x: 0, y: 1, z: 0}
+  virtualCamera: {fileID: 1070655195}
 --- !u!114 &338044336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1451,8 +1454,8 @@ MonoBehaviour:
   playerDeath: {fileID: 8300000, guid: 932b35122af0998479672728197ea3f8, type: 3}
   bossSpawn: {fileID: 8300000, guid: 17ef6c7b2eda23d458437cb29dcfdc55, type: 3}
   bossDeath: {fileID: 8300000, guid: 564ab41e5dea3704b9e10a9c94b914c7, type: 3}
-  menuTheme: {fileID: 0}
-  gameplayTheme: {fileID: 0}
+  menuTheme: {fileID: 8300000, guid: 5600c02cf49416747ab98e7a9976d3a3, type: 3}
+  gameplayTheme: {fileID: 8300000, guid: 9f0799ad4a062b243954ea99942e6005, type: 3}
 --- !u!1 &350462457
 GameObject:
   m_ObjectHideFlags: 0
@@ -2469,7 +2472,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20807.715, y: 0, z: -10}
+  m_LocalPosition: {x: -0.9699998, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3253,7 +3256,6 @@ MonoBehaviour:
   mainMenuInfoButton: {fileID: 1312191293}
   pauseMenuInfoButton: {fileID: 1676094081}
   infoBackButton: {fileID: 785435831}
-  tunnelSpawner: {fileID: 1933608637}
   infoText: {fileID: 1501361813}
 --- !u!4 &746459466 stripped
 Transform:
@@ -4617,7 +4619,7 @@ GameObject:
   - component: {fileID: 1070655197}
   m_Layer: 0
   m_Name: CinemachineCamera (1)
-  m_TagString: Untagged
+  m_TagString: CinemachineNotFoundInC#
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7212,7 +7214,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 20807.715, y: 0}
+  m_Offset: {x: 0, y: -0.088453054}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -7222,7 +7224,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 41637.71, y: 10.5}
+  m_Size: {x: 25, y: 11.469282}
   m_EdgeRadius: 0
 --- !u!4 &1562257402
 Transform:
@@ -8162,7 +8164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ec2a48c9f71b7a4da359f90c18a1855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 2029215842}
   segmentPrefabs:
   - {fileID: 8384595587043473267, guid: 9e11925920427ea41bea4dfbd6c16d8a, type: 3}
   - {fileID: 576288079600802950, guid: 065bd499e9b1c2e459ad2fe482ce0119, type: 3}
@@ -8183,6 +8184,7 @@ MonoBehaviour:
   segmentsAhead: 6
   maxSegments: 10
   segmentWidth: 22
+  scrollSpeed: 5
 --- !u!4 &1933608638
 Transform:
   m_ObjectHideFlags: 0
@@ -8302,6 +8304,7 @@ MonoBehaviour:
   minY: -6
   maxY: 6
   maxSpeed: 6
+  leftKillX: -12
 --- !u!4 &2029215842
 Transform:
   m_ObjectHideFlags: 0

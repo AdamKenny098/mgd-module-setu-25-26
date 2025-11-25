@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
-using System.Threading;
 
 public class UIManager : MonoBehaviour
 {
@@ -29,27 +28,21 @@ public class UIManager : MonoBehaviour
 
     private bool isPaused;
     private bool infoOpenedFromPause;
-    private float startPoint;
-
-    public TunnelSpawner tunnelSpawner;
-
-    public TMP_Text infoText;  
+    public TMP_Text infoText;
 
     void Start()
     {
-
-        string gameTitle = "Ironhollow"; // or whatever
         string version = Application.version;
         string device = SystemInfo.deviceModel;
-        string buildDate = "2025-11-23";
+        string buildDate = "2025-11-25";
 
-        infoText.text = 
+        infoText.text =
             $"Version: {version}\n" +
             $"Device: {device}\n" +
             $"Build Date: {buildDate}";
-    
+
         if (EventSystem.current) EventSystem.current.SetSelectedGameObject(null);
-        
+
         _ = ActivateAfterFrameAsync();
 
         AddEvents();
@@ -62,42 +55,21 @@ public class UIManager : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-
-        UnityEngine.InputSystem.InputSystem.QueueStateEvent(
-            UnityEngine.InputSystem.Mouse.current,
-            new UnityEngine.InputSystem.LowLevel.MouseState()
-        );
     }
 
-    void Update()
-    {
-        if (hud.activeSelf)
-        {
-            if (GameManager.Instance.Player == null)
-            {
-                GameManager.Instance.Player = FindFirstObjectByType<PlayerMagnetController>();
-                if (GameManager.Instance.Player == null)
-                    return;
-            }
-
-            float dist = GameManager.Instance.Player.transform.position.x - startPoint;
-            distanceText.text = $"{dist:0} m";
-        }
-    }
 
     public void ShowMainMenu()
     {
         mainMenu.SetActive(true);
         hud.SetActive(false);
         pauseMenu.SetActive(false);
-        if (infoPanel != null) infoPanel.SetActive(false);
+        if (infoPanel) infoPanel.SetActive(false);
 
         Time.timeScale = 0f;
         isPaused = false;
         infoOpenedFromPause = false;
 
         AudioManager.Instance.PlayMenuMusic();
-
     }
 
     public void StartGame()
@@ -105,28 +77,16 @@ public class UIManager : MonoBehaviour
         mainMenu.SetActive(false);
         hud.SetActive(true);
         pauseMenu.SetActive(false);
-        if (infoPanel != null) infoPanel.SetActive(false);
+        if (infoPanel) infoPanel.SetActive(false);
 
-        if (GameManager.Instance.Player is null)
-            GameManager.Instance.Player = FindFirstObjectByType<PlayerMagnetController>();
-
-        startPoint = GameManager.Instance.Player.transform.position.x;
         Time.timeScale = 1f;
 
-        if (tunnelSpawner == null)
-            tunnelSpawner = FindFirstObjectByType<TunnelSpawner>();
-
-        tunnelSpawner.BeginSpawning();
-        GameManager.Instance.UIManager = this;
-
-        AudioManager.Instance.PlayGameplayMusic();
-
+        GameManager.Instance.StartRun();
     }
 
     public void TogglePause()
     {
-        // Don’t pause/unpause if info panel is open
-        if (infoPanel != null && infoPanel.activeSelf)
+        if (infoPanel && infoPanel.activeSelf)
             return;
 
         isPaused = !isPaused;
@@ -140,7 +100,6 @@ public class UIManager : MonoBehaviour
         ShowMainMenu();
         GameManager.Instance.RestartScene();
         AudioManager.Instance.PlayMenuMusic();
-
     }
 
     public void QuitGame()
@@ -155,10 +114,11 @@ public class UIManager : MonoBehaviour
 
     public void OpenInfoFromMainMenu()
     {
-        if (infoPanel == null) return;
+        if (!infoPanel) return;
 
         infoOpenedFromPause = false;
 
+        mainMenu.SetActive(false);
         pauseMenu.SetActive(false);
         infoPanel.SetActive(true);
 
@@ -167,7 +127,7 @@ public class UIManager : MonoBehaviour
 
     public void OpenInfoFromPause()
     {
-        if (infoPanel == null) return;
+        if (!infoPanel) return;
 
         infoOpenedFromPause = true;
 
@@ -180,20 +140,18 @@ public class UIManager : MonoBehaviour
 
     public void CloseInfo()
     {
-        if (infoPanel == null) return;
+        if (!infoPanel) return;
 
         infoPanel.SetActive(false);
 
         if (infoOpenedFromPause)
         {
-            // Go back to pause menu, stay paused
             pauseMenu.SetActive(true);
             hud.SetActive(true);
             Time.timeScale = 0f;
         }
         else
         {
-            // Go back to main menu (still paused)
             mainMenu.SetActive(true);
             Time.timeScale = 0f;
         }
@@ -203,28 +161,14 @@ public class UIManager : MonoBehaviour
 
     public void AddEvents()
     {
-        if (playButton != null)
-            playButton.onClick.AddListener(StartGame);
+        playButton?.onClick.AddListener(StartGame);
+        pauseButton?.onClick.AddListener(TogglePause);
+        resumeButton?.onClick.AddListener(TogglePause);
+        restartButton?.onClick.AddListener(RestartGame);
+        quitButton?.onClick.AddListener(QuitGame);
 
-        if (pauseButton != null)
-            pauseButton.onClick.AddListener(TogglePause);
-
-        if (resumeButton != null)
-            resumeButton.onClick.AddListener(TogglePause);
-
-        if (restartButton != null)
-            restartButton.onClick.AddListener(RestartGame);
-
-        if (quitButton != null)
-            quitButton.onClick.AddListener(QuitGame);
-
-        if (mainMenuInfoButton != null)
-            mainMenuInfoButton.onClick.AddListener(OpenInfoFromMainMenu);
-
-        if (pauseMenuInfoButton != null)
-            pauseMenuInfoButton.onClick.AddListener(OpenInfoFromPause);
-
-        if (infoBackButton != null)
-            infoBackButton.onClick.AddListener(CloseInfo);
+        mainMenuInfoButton?.onClick.AddListener(OpenInfoFromMainMenu);
+        pauseMenuInfoButton?.onClick.AddListener(OpenInfoFromPause);
+        infoBackButton?.onClick.AddListener(CloseInfo);
     }
 }

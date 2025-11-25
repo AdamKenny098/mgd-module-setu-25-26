@@ -4,7 +4,6 @@ using System.Collections.Generic;
 public class TunnelSpawner : MonoBehaviour
 {
     [Header("References")]
-    public Transform player;
     public List<GameObject> segmentPrefabs;
     public GameObject firstSegmentPrefab;
 
@@ -12,27 +11,59 @@ public class TunnelSpawner : MonoBehaviour
     public int segmentsAhead = 6;
     public int maxSegments = 10;
     public float segmentWidth = 20f;
+    public float scrollSpeed = 5f;
 
-    private readonly Queue<GameObject> activeSegments = new();
-    private float nextSpawnX = 0f;
-    private bool isSpawning = false;
-    private bool firstSpawnDone = false;
+    readonly Queue<GameObject> activeSegments = new();
+    bool isSpawning = false;
+    GameObject tailSegment;
 
     void Update()
     {
-        if (!isSpawning || !player) return;
+        if (!isSpawning) return;
 
-        // Spawn ahead if needed
-        while (player.position.x + segmentWidth * segmentsAhead > nextSpawnX)
+        float dt = Time.deltaTime;
+        float camX = Camera.main ? Camera.main.transform.position.x : 0f;
+
+        // Move all segments left
+        foreach (var seg in activeSegments)
         {
-            SpawnSegment();
-        }   
+            if (seg == null) continue;
+            seg.transform.position += Vector3.left * scrollSpeed * dt;
+        }
 
-        // Recycle behind if too many
+        // Spawn ahead when needed
+        if (tailSegment != null)
+        {
+            while (tailSegment.transform.position.x < camX + segmentsAhead * segmentWidth)
+            {
+                float spawnX = tailSegment.transform.position.x + segmentWidth;
+                SpawnRandomSegmentAt(spawnX);
+            }
+        }
+
+        // Recycle segments that fall behind camera
+        while (activeSegments.Count > 0)
+        {
+            var oldest = activeSegments.Peek();
+            if (oldest == null)
+            {
+                activeSegments.Dequeue();
+                continue;
+            }
+
+            if (oldest.transform.position.x < camX - segmentWidth * 2f)
+            {
+                activeSegments.Dequeue();
+                Destroy(oldest);
+            }
+            else break;
+        }
+
+        // Safety limit
         while (activeSegments.Count > maxSegments)
         {
             var old = activeSegments.Dequeue();
-            Destroy(old);
+            if (old != null) Destroy(old);
         }
     }
 
@@ -40,45 +71,62 @@ public class TunnelSpawner : MonoBehaviour
     {
         if (isSpawning) return;
 
+        ClearAll();
         isSpawning = true;
-        nextSpawnX = 0f;
-        firstSpawnDone = false;
 
-        // Warm-up a few segments
-        for (int i = 0; i < segmentsAhead; i++)
+        float camX = Camera.main ? Camera.main.transform.position.x : 0f;
+
+        // Spawn the first segment UNDER the camera
+        float firstX = camX;
+        SpawnFirstSegment(firstX);
+
+        // Spawn ahead segments
+        for (int i = 1; i <= segmentsAhead; i++)
         {
-            SpawnSegment();
+            float x = firstX + i * segmentWidth;
+            SpawnRandomSegmentAt(x);
         }
     }
+
 
     public void ClearAll()
     {
         foreach (var seg in activeSegments)
         {
-            Destroy(seg);
+            if (seg != null) Destroy(seg);
         }
+
         activeSegments.Clear();
-        nextSpawnX = 0f;
+        tailSegment = null;
         isSpawning = false;
     }
 
-    void SpawnSegment()
+
+    void SpawnFirstSegment(float x)
     {
-        GameObject prefab;
-
-        // First-ever segment spawn → use your chosen prefab
-        if (!firstSpawnDone && firstSegmentPrefab != null)
+        if (firstSegmentPrefab == null)
         {
-            prefab = firstSegmentPrefab;
-            firstSpawnDone = true;
-        }
-        else
-        {
-            prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
+            Debug.LogWarning("TunnelSpawner: No firstSegmentPrefab assigned!");
+            return;
         }
 
-        var newSeg = Instantiate(prefab, new Vector3(nextSpawnX, 0, 0), Quaternion.identity, transform);
-        activeSegments.Enqueue(newSeg);
-        nextSpawnX += segmentWidth;
+        var seg = Instantiate(firstSegmentPrefab, new Vector3(x, 0f, 0f), Quaternion.identity, transform);
+        activeSegments.Enqueue(seg);
+        tailSegment = seg;
+    }
+
+    void SpawnRandomSegmentAt(float x)
+    {
+        if (segmentPrefabs == null || segmentPrefabs.Count == 0)
+        {
+            Debug.LogError("TunnelSpawner: No segmentPrefabs assigned.");
+            return;
+        }
+
+        var prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
+        var seg = Instantiate(prefab, new Vector3(x, 0f, 0f), Quaternion.identity, transform);
+
+        activeSegments.Enqueue(seg);
+        tailSegment = seg;
     }
 }

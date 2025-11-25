@@ -17,6 +17,13 @@ public class GameManager : MonoBehaviour
     [Header("Camera")]
     public CinemachineCamera virtualCamera;
 
+    [Header("Persistence")]
+    const string LastRunKey = "IH_LastRunDistance";
+    const string BestRunKey = "IH_BestRunDistance";
+
+    float lastRunDistance;
+    float bestRunDistance;
+
 
     void Awake()
     {
@@ -52,6 +59,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         TelemetryManager.Instance.OnLevelStart("Ironhollow");
+        LoadPersistentData();
     }
 
     void Update()
@@ -119,6 +127,68 @@ public class GameManager : MonoBehaviour
 
         TelemetryManager.Instance.OnLevelComplete("Ironhollow");
 
+        SaveRunProgress();
+
         RestartScene();
     }
+
+    void SaveRunProgress()
+    {
+        // Only bother if we actually ran somewhere
+        if (CurrentDistance <= 0.5f) return;
+
+        lastRunDistance = CurrentDistance;
+
+        if (lastRunDistance > bestRunDistance)
+            bestRunDistance = lastRunDistance;
+
+        PlayerPrefs.SetFloat(LastRunKey, lastRunDistance);
+        PlayerPrefs.SetFloat(BestRunKey, bestRunDistance);
+        PlayerPrefs.Save();
+
+        if (!UIManager)
+            UIManager.SetRunStats(lastRunDistance, bestRunDistance);
+    }
+
+
+    
+
+    void LoadPersistentData()
+    {
+        lastRunDistance = PlayerPrefs.GetFloat(LastRunKey, 0f);
+        bestRunDistance = PlayerPrefs.GetFloat(BestRunKey, 0f);
+
+        if (!UIManager)
+            UIManager.SetRunStats(lastRunDistance, bestRunDistance);
+    }
+
+    void OnApplicationPause(bool pause)
+    {
+        if (pause)
+            HandleFocusLoss();
+    }
+
+    void OnApplicationFocus(bool focus)
+    {
+        if (!focus)
+            HandleFocusLoss();
+    }
+
+    void HandleFocusLoss()
+    {
+        // Prevent weird resume behaviour
+        Time.timeScale = 0f;
+
+        // Save run progress if a run is active
+        SaveRunProgress();
+
+        // Show pause menu if UI exists
+        if (UIManager != null && UIManager.hud.activeSelf)
+        {
+            UIManager.ShowPauseFromSystem();
+        }
+    }
+
+
+
 }

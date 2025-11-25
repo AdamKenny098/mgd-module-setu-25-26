@@ -30,6 +30,10 @@ public class UIManager : MonoBehaviour
     private bool infoOpenedFromPause;
     public TMP_Text infoText;
 
+    [Header("Menu Stats")]
+    public TMP_Text lastRunText;
+    public TMP_Text bestRunText;
+
     void Start()
     {
         string version = Application.version;
@@ -88,7 +92,7 @@ public class UIManager : MonoBehaviour
     {
         if (infoPanel && infoPanel.activeSelf)
             return;
-
+        
         isPaused = !isPaused;
         pauseMenu.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
@@ -171,4 +175,22 @@ public class UIManager : MonoBehaviour
         pauseMenuInfoButton?.onClick.AddListener(OpenInfoFromPause);
         infoBackButton?.onClick.AddListener(CloseInfo);
     }
+
+    public void SetRunStats(float lastRun, float bestRun)
+    {
+        if (lastRunText != null)
+            lastRunText.text = lastRun > 0.5f ? $"Last run: {lastRun:0} m" : "Last run: -";
+
+        if (bestRunText != null)
+            bestRunText.text = bestRun > 0.5f ? $"Best: {bestRun:0} m" : "Best: -";
+    }
+
+    public void ShowPauseFromSystem()
+    {
+        hud.SetActive(true);     // ensure visible
+        pauseMenu.SetActive(true);
+        isPaused = true;
+    }
+
+
 }

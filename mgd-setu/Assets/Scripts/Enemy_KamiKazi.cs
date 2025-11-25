@@ -87,6 +87,8 @@ public class EnemyKamikaze : MonoBehaviour, IMagnetic
 
     private void Explode()
     {
+        AudioManager.Instance.PlayKamiExplode();
+
         TelemetryManager.Instance.OnEnemyDestroyed("Kamikaze");
         if (explosionPrefab)
         {

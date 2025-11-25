@@ -45,7 +45,7 @@ public class BossManager : MonoBehaviour
         if (BossBombFactory.Instance != null)
         return;
 
-
+        AudioManager.Instance?.PlayBossDeath();
         Transform anchor = Camera.main.transform.Find("BossAnchor");
         var go = Instantiate(bossPrefab, anchor.position, Quaternion.identity, anchor);
         currentBoss = BossBombFactory.Instance;

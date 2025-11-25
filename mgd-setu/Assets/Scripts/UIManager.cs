@@ -33,8 +33,21 @@ public class UIManager : MonoBehaviour
 
     public TunnelSpawner tunnelSpawner;
 
+    public TMP_Text infoText;  
+
     void Start()
     {
+
+        string gameTitle = "Ironhollow"; // or whatever
+        string version = Application.version;
+        string device = SystemInfo.deviceModel;
+        string buildDate = "2025-11-23";
+
+        infoText.text = 
+            $"Version: {version}\n" +
+            $"Device: {device}\n" +
+            $"Build Date: {buildDate}";
+    
         if (EventSystem.current) EventSystem.current.SetSelectedGameObject(null);
         
         _ = ActivateAfterFrameAsync();
@@ -82,6 +95,9 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 0f;
         isPaused = false;
         infoOpenedFromPause = false;
+
+        AudioManager.Instance.PlayMenuMusic();
+
     }
 
     public void StartGame()
@@ -102,6 +118,9 @@ public class UIManager : MonoBehaviour
 
         tunnelSpawner.BeginSpawning();
         GameManager.Instance.UIManager = this;
+
+        AudioManager.Instance.PlayGameplayMusic();
+
     }
 
     public void TogglePause()
@@ -120,6 +139,8 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1f;
         ShowMainMenu();
         GameManager.Instance.RestartScene();
+        AudioManager.Instance.PlayMenuMusic();
+
     }
 
     public void QuitGame()

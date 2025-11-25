@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+        Application.targetFrameRate = 60;
     }
 
     void OnDestroy()
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDied()
     {
+        AudioManager.Instance?.PlayPlayerDeath();
         TelemetryManager.Instance.OnPlayerDied();
         Time.timeScale = 0f;
 

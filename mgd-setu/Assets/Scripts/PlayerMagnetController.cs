@@ -124,6 +124,8 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
             ? IMagnetic.Polarity.Blue
             : IMagnetic.Polarity.Red;
 
+        AudioManager.Instance.PlayMagnetFlip();
+
         var sr = GetComponent<SpriteRenderer>();
         if (sr) sr.color = (CurrentPolarity == IMagnetic.Polarity.Red) ? Color.red : Color.blue;
 

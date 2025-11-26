@@ -22,9 +22,11 @@ public class TunnelSpawner : MonoBehaviour
         if (!isSpawning) return;
 
         float dt = Time.deltaTime;
-        float camX = Camera.main ? Camera.main.transform.position.x : 0f;
 
-        // Move all segments left
+        float camX = 0f;
+        if (Camera.main != null)
+            camX = Camera.main.transform.position.x;
+
         foreach (var seg in activeSegments)
         {
             if (seg == null) continue;
@@ -59,7 +61,6 @@ public class TunnelSpawner : MonoBehaviour
             else break;
         }
 
-        // Safety limit
         while (activeSegments.Count > maxSegments)
         {
             var old = activeSegments.Dequeue();
@@ -74,20 +75,20 @@ public class TunnelSpawner : MonoBehaviour
         ClearAll();
         isSpawning = true;
 
-        float camX = Camera.main ? Camera.main.transform.position.x : 0f;
-
         // Spawn the first segment UNDER the camera
+        float camX = 0f;
+        if (Camera.main != null)
+            camX = Camera.main.transform.position.x;
+
         float firstX = camX;
         SpawnFirstSegment(firstX);
 
-        // Spawn ahead segments
         for (int i = 1; i <= segmentsAhead; i++)
         {
             float x = firstX + i * segmentWidth;
             SpawnRandomSegmentAt(x);
         }
     }
-
 
     public void ClearAll()
     {
@@ -101,7 +102,6 @@ public class TunnelSpawner : MonoBehaviour
         isSpawning = false;
     }
 
-
     void SpawnFirstSegment(float x)
     {
         if (firstSegmentPrefab == null)
@@ -111,6 +111,8 @@ public class TunnelSpawner : MonoBehaviour
         }
 
         var seg = Instantiate(firstSegmentPrefab, new Vector3(x, 0f, 0f), Quaternion.identity, transform);
+        if (seg == null) return;
+
         activeSegments.Enqueue(seg);
         tailSegment = seg;
     }
@@ -123,8 +125,10 @@ public class TunnelSpawner : MonoBehaviour
             return;
         }
 
-        var prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
+        GameObject prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
         var seg = Instantiate(prefab, new Vector3(x, 0f, 0f), Quaternion.identity, transform);
+
+        if (seg == null) return;
 
         activeSegments.Enqueue(seg);
         tailSegment = seg;

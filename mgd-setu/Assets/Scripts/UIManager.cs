@@ -34,20 +34,24 @@ public class UIManager : MonoBehaviour
     public TMP_Text lastRunText;
     public TMP_Text bestRunText;
 
-    void Start()
+    async void Start()
     {
-        string version = Application.version;
-        string device = SystemInfo.deviceModel;
-        string buildDate = "2025-11-25";
+        if (infoText != null)
+        {
+            string version = Application.version;
+            string device = SystemInfo.deviceModel;
+            string buildDate = "2025-11-25";
 
-        infoText.text =
-            $"Version: {version}\n" +
-            $"Device: {device}\n" +
-            $"Build Date: {buildDate}";
+            infoText.text =
+                $"Version: {version}\n" +
+                $"Device: {device}\n" +
+                $"Build Date: {buildDate}";
+        }
 
-        if (EventSystem.current) EventSystem.current.SetSelectedGameObject(null);
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
 
-        _ = ActivateAfterFrameAsync();
+        await ActivateAfterFrameAsync();
 
         AddEvents();
         ShowMainMenu();
@@ -64,10 +68,10 @@ public class UIManager : MonoBehaviour
 
     public void ShowMainMenu()
     {
-        mainMenu.SetActive(true);
-        hud.SetActive(false);
-        pauseMenu.SetActive(false);
-        if (infoPanel) infoPanel.SetActive(false);
+        if (mainMenu != null) mainMenu.SetActive(true);
+        if (hud != null) hud.SetActive(false);
+        if (pauseMenu != null) pauseMenu.SetActive(false);
+        if (infoPanel != null) infoPanel.SetActive(false);
 
         Time.timeScale = 0f;
         isPaused = false;
@@ -78,23 +82,27 @@ public class UIManager : MonoBehaviour
 
     public void StartGame()
     {
-        mainMenu.SetActive(false);
-        hud.SetActive(true);
-        pauseMenu.SetActive(false);
-        if (infoPanel) infoPanel.SetActive(false);
+        if (mainMenu != null) mainMenu.SetActive(false);
+        if (hud != null) hud.SetActive(true);
+        if (pauseMenu != null) pauseMenu.SetActive(false);
+        if (infoPanel != null) infoPanel.SetActive(false);
 
         Time.timeScale = 1f;
 
-        GameManager.Instance.StartRun();
+        if (GameManager.Instance != null)
+            GameManager.Instance.StartRun();
     }
 
     public void TogglePause()
     {
-        if (infoPanel && infoPanel.activeSelf)
+        if (infoPanel != null && infoPanel.activeSelf)
             return;
-        
+
         isPaused = !isPaused;
-        pauseMenu.SetActive(isPaused);
+
+        if (pauseMenu != null)
+            pauseMenu.SetActive(isPaused);
+
         Time.timeScale = isPaused ? 0f : 1f;
     }
 
@@ -102,7 +110,10 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         ShowMainMenu();
-        GameManager.Instance.RestartScene();
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.RestartScene();
+
         AudioManager.Instance.PlayMenuMusic();
     }
 
@@ -118,50 +129,48 @@ public class UIManager : MonoBehaviour
 
     public void OpenInfoFromMainMenu()
     {
-        if (!infoPanel) return;
+        if (infoPanel == null) return;
 
         infoOpenedFromPause = false;
 
-        mainMenu.SetActive(false);
-        pauseMenu.SetActive(false);
-        infoPanel.SetActive(true);
+        if (mainMenu != null) mainMenu.SetActive(false);
+        if (pauseMenu != null) pauseMenu.SetActive(false);
 
+        infoPanel.SetActive(true);
         Time.timeScale = 0f;
     }
 
     public void OpenInfoFromPause()
     {
-        if (!infoPanel) return;
+        if (infoPanel == null) return;
 
         infoOpenedFromPause = true;
 
-        hud.SetActive(false);
-        pauseMenu.SetActive(false);
-        infoPanel.SetActive(true);
+        if (hud != null) hud.SetActive(false);
+        if (pauseMenu != null) pauseMenu.SetActive(false);
 
+        infoPanel.SetActive(true);
         Time.timeScale = 0f;
     }
 
     public void CloseInfo()
     {
-        if (!infoPanel) return;
+        if (infoPanel == null) return;
 
         infoPanel.SetActive(false);
 
         if (infoOpenedFromPause)
         {
-            pauseMenu.SetActive(true);
-            hud.SetActive(true);
-            Time.timeScale = 0f;
+            if (pauseMenu != null) pauseMenu.SetActive(true);
+            if (hud != null) hud.SetActive(true);
         }
         else
         {
-            mainMenu.SetActive(true);
-            Time.timeScale = 0f;
+            if (mainMenu != null) mainMenu.SetActive(true);
         }
-    }
 
-    // ===== BUTTON WIRING =====
+        Time.timeScale = 0f;
+    }
 
     public void AddEvents()
     {
@@ -187,10 +196,8 @@ public class UIManager : MonoBehaviour
 
     public void ShowPauseFromSystem()
     {
-        hud.SetActive(true);     // ensure visible
-        pauseMenu.SetActive(true);
+        if (hud != null) hud.SetActive(true);
+        if (pauseMenu != null) pauseMenu.SetActive(true);
         isPaused = true;
     }
-
-
 }

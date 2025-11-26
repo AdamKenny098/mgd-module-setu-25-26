@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManager;
 using Unity.Cinemachine;
 
 public class GameManager : MonoBehaviour
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (!Instance)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -39,7 +39,6 @@ public class GameManager : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-        Application.targetFrameRate = 60;
     }
 
     void OnDestroy()
@@ -53,21 +52,22 @@ public class GameManager : MonoBehaviour
         UIManager = FindFirstObjectByType<UIManager>();
         tunnelSpawner = FindFirstObjectByType<TunnelSpawner>();
 
-        if (UIManager) UIManager.ShowMainMenu();
+        if (UIManager != null)
+            UIManager.ShowMainMenu();
     }
 
     void Start()
     {
-        TelemetryManager.Instance.OnLevelStart("Ironhollow");
+        if (TelemetryManager.Instance != null)
+            TelemetryManager.Instance.OnLevelStart("Ironhollow");
+
         LoadPersistentData();
     }
 
     void Update()
     {
-        if (UIManager && UIManager.hud.activeSelf)
-        {
+        if (UIManager != null && UIManager.hud != null && UIManager.hud.activeSelf)
             UpdateDistance();
-        }
     }
 
     void UpdateDistance()
@@ -75,7 +75,8 @@ public class GameManager : MonoBehaviour
         if (tunnelSpawner == null)
             tunnelSpawner = FindFirstObjectByType<TunnelSpawner>();
 
-        if (tunnelSpawner == null) return;
+        if (tunnelSpawner == null || UIManager == null || UIManager.distanceText == null)
+            return;
 
         CurrentDistance += tunnelSpawner.scrollSpeed * Time.deltaTime;
         UIManager.distanceText.text = $"{CurrentDistance:0} m";
@@ -89,27 +90,25 @@ public class GameManager : MonoBehaviour
         if (Player == null)
             Player = FindFirstObjectByType<PlayerMagnetController>();
 
-        Player.transform.position = startRunPosition;
-        Player.enabled = true;
-
-        var vcam = virtualCamera;
-
-        if (vcam)
+        if (Player != null)
         {
-            vcam.PreviousStateIsValid = false; // forces a full recompute of camera state
+            Player.transform.position = startRunPosition;
+            Player.enabled = true;
         }
 
-        // Reset everything else  
+        if (virtualCamera != null)
+            virtualCamera.PreviousStateIsValid = false;
+
         CurrentDistance = 0f;
 
         if (tunnelSpawner == null)
             tunnelSpawner = FindFirstObjectByType<TunnelSpawner>();
 
-        if (tunnelSpawner)
+        if (tunnelSpawner != null)
             tunnelSpawner.BeginSpawning();
 
-        AudioManager.Instance.PlayGameplayMusic();
-        //TutorialManager.Instance?.OnRunStarted(runIndex); To come
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayGameplayMusic();
     }
 
     public void RestartScene()
@@ -120,21 +119,20 @@ public class GameManager : MonoBehaviour
     public void PlayerDied()
     {
         AudioManager.Instance?.PlayPlayerDeath();
-        TelemetryManager.Instance.OnPlayerDied();
+        TelemetryManager.Instance?.OnPlayerDied();
         Time.timeScale = 0f;
 
-        if (Player) Player.enabled = false;
+        if (Player != null)
+            Player.enabled = false;
 
         TelemetryManager.Instance.OnLevelComplete("Ironhollow");
 
         SaveRunProgress();
-
         RestartScene();
     }
 
     void SaveRunProgress()
     {
-        // Only bother if we actually ran somewhere
         if (CurrentDistance <= 0.5f) return;
 
         lastRunDistance = CurrentDistance;
@@ -146,19 +144,16 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetFloat(BestRunKey, bestRunDistance);
         PlayerPrefs.Save();
 
-        if (!UIManager)
+        if (UIManager != null)
             UIManager.SetRunStats(lastRunDistance, bestRunDistance);
     }
-
-
-    
 
     void LoadPersistentData()
     {
         lastRunDistance = PlayerPrefs.GetFloat(LastRunKey, 0f);
         bestRunDistance = PlayerPrefs.GetFloat(BestRunKey, 0f);
 
-        if (!UIManager)
+        if (UIManager != null)
             UIManager.SetRunStats(lastRunDistance, bestRunDistance);
     }
 
@@ -176,19 +171,10 @@ public class GameManager : MonoBehaviour
 
     void HandleFocusLoss()
     {
-        // Prevent weird resume behaviour
         Time.timeScale = 0f;
-
-        // Save run progress if a run is active
         SaveRunProgress();
 
-        // Show pause menu if UI exists
-        if (UIManager != null && UIManager.hud.activeSelf)
-        {
+        if (UIManager != null && UIManager.hud != null && UIManager.hud.activeSelf)
             UIManager.ShowPauseFromSystem();
-        }
     }
-
-
-
 }

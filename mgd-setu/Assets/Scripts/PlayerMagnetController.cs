@@ -84,14 +84,14 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
         // Kill if swept too far left by terrain
         if (pos.x < leftKillX)
         {
-            GameManager.Instance.PlayerDied();
+            if (GameManager.Instance) GameManager.Instance.PlayerDied();
             return;
         }
 
         // Kill if out of vertical bounds
         if (pos.y < minY - 0.1f || pos.y > maxY + 0.1f)
         {
-            GameManager.Instance.PlayerDied();
+            if (GameManager.Instance != null) GameManager.Instance.PlayerDied();
             return;
         }
 
@@ -110,7 +110,7 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
         var vel = rb.linearVelocity;
         if (vel.magnitude > maxSpeed)
             vel = vel.normalized * maxSpeed;
-
+        
         // We do NOT lock X here – let physics handle bumps, leftKillX handles crushes
         rb.linearVelocity = vel;
     }
@@ -130,10 +130,10 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
             ? IMagnetic.Polarity.Blue
             : IMagnetic.Polarity.Red;
 
-        AudioManager.Instance.PlayMagnetFlip();
+        if (AudioManager.Instance) AudioManager.Instance.PlayMagnetFlip();
 
         var sr = GetComponent<SpriteRenderer>();
-        if (sr) sr.color = (CurrentPolarity == IMagnetic.Polarity.Red) ? Color.red : Color.blue;
+        if (sr)sr.color = (CurrentPolarity == IMagnetic.Polarity.Red) ? Color.red : Color.blue;
 
         float nudge = (CurrentPolarity == IMagnetic.Polarity.Red) ? -1f : 1f;
         rb.AddForce(Vector2.up * nudge * 5f, ForceMode2D.Impulse);

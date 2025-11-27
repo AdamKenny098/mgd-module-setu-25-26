@@ -8935,6 +8935,7 @@ MonoBehaviour:
   minY: -6
   maxY: 6
   leftKillX: -12
+  flipBoostStrength: 10
 --- !u!4 &2029215842
 Transform:
   m_ObjectHideFlags: 0

@@ -24,6 +24,10 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
     PlayerInput playerInput;
     InputAction polarityAction;
 
+    [Header("Polarity Flip Boost")]
+    public float flipBoostStrength = 15f;
+
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -133,9 +137,12 @@ public class PlayerMagnetController : MonoBehaviour, IMagnetic
         if (AudioManager.Instance) AudioManager.Instance.PlayMagnetFlip();
 
         var sr = GetComponent<SpriteRenderer>();
-        if (sr)sr.color = (CurrentPolarity == IMagnetic.Polarity.Red) ? Color.red : Color.blue;
+        if (sr) sr.color = (CurrentPolarity == IMagnetic.Polarity.Red) ? Color.red : Color.blue;
 
         float nudge = (CurrentPolarity == IMagnetic.Polarity.Red) ? -1f : 1f;
-        rb.AddForce(Vector2.up * nudge * 5f, ForceMode2D.Impulse);
+
+        // Guaranteed boost even in open air
+        rb.AddForce(Vector2.up * nudge * flipBoostStrength, ForceMode2D.Impulse);
     }
+
 }

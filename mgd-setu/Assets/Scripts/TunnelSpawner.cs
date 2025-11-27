@@ -1,88 +1,111 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Profiling;
 
 public class TunnelSpawner : MonoBehaviour
 {
-    [Header("References")]
+    [Header("Settings")]
     public List<GameObject> segmentPrefabs;
     public GameObject firstSegmentPrefab;
-
-    [Header("Settings")]
     public int segmentsAhead = 6;
     public int maxSegments = 10;
     public float segmentWidth = 20f;
     public float scrollSpeed = 5f;
 
     readonly Queue<GameObject> activeSegments = new();
+    readonly Queue<GameObject> pool = new();  // unified pool
+
     bool isSpawning = false;
     GameObject tailSegment;
 
+    static readonly ProfilerMarker SpawnerUpdateMarker  = new ProfilerMarker("IH.TunnelSpawner.Update");
+    static readonly ProfilerMarker SpawnerSpawnMarker   = new ProfilerMarker("IH.TunnelSpawner.Spawn");
+    static readonly ProfilerMarker SpawnerRecycleMarker = new ProfilerMarker("IH.TunnelSpawner.Recycle");
+
     void Update()
     {
-        if (!isSpawning) return;
+#if UNITY_EDITOR
+        if (!Application.isPlaying) 
+            return;
+#endif
 
-        float dt = Time.deltaTime;
+        if (!isSpawning)
+            return;
 
-        float camX = 0f;
-        if (Camera.main != null)
-            camX = Camera.main.transform.position.x;
-
-        foreach (var seg in activeSegments)
+        using (SpawnerUpdateMarker.Auto())
         {
-            if (seg == null) continue;
-            seg.transform.position += Vector3.left * scrollSpeed * dt;
-        }
+            Debug.Log("Spawner running");
+            float dt = Time.deltaTime;
+            float camX = Camera.main ? Camera.main.transform.position.x : 0f;
 
-        // Spawn ahead when needed
-        if (tailSegment != null)
-        {
-            while (tailSegment.transform.position.x < camX + segmentsAhead * segmentWidth)
+            // Move active segments left
+            foreach (var seg in activeSegments)
             {
-                float spawnX = tailSegment.transform.position.x + segmentWidth;
-                SpawnRandomSegmentAt(spawnX);
-            }
-        }
-
-        // Recycle segments that fall behind camera
-        while (activeSegments.Count > 0)
-        {
-            var oldest = activeSegments.Peek();
-            if (oldest == null)
-            {
-                activeSegments.Dequeue();
-                continue;
+                if (seg == null) continue;
+                seg.transform.position += Vector3.left * scrollSpeed * dt;
             }
 
-            if (oldest.transform.position.x < camX - segmentWidth * 2f)
+            using (SpawnerSpawnMarker.Auto())
             {
-                activeSegments.Dequeue();
-                Destroy(oldest);
+                // spawn ahead
+                if (tailSegment != null)
+                {
+                    while (tailSegment.transform.position.x < camX + segmentsAhead * segmentWidth)
+                    {
+                        float spawnX = tailSegment.transform.position.x + segmentWidth;
+                        SpawnRandomSegmentAt(spawnX);
+                    }
+                }
             }
-            else break;
-        }
 
-        while (activeSegments.Count > maxSegments)
-        {
-            var old = activeSegments.Dequeue();
-            if (old != null) Destroy(old);
+            using (SpawnerRecycleMarker.Auto())
+            {
+                // recycle behind
+                while (activeSegments.Count > 0)
+                {
+                    GameObject oldest = activeSegments.Peek();
+                    if (oldest == null)
+                    {
+                        activeSegments.Dequeue();
+                        continue;
+                    }
+
+                    if (oldest.transform.position.x < camX - segmentWidth * 2f)
+                    {
+                        activeSegments.Dequeue();
+                        Recycle(oldest);
+                    }
+                    else break;
+                }
+
+                // safety limit
+                while (activeSegments.Count > maxSegments)
+                {
+                    var old = activeSegments.Dequeue();
+                    if (old != null) Recycle(old);
+                }
+            }
         }
     }
 
     public void BeginSpawning()
     {
-        if (isSpawning) return;
+        if (!Application.isPlaying)
+            return;
+
+        if (isSpawning)
+            return;
 
         ClearAll();
         isSpawning = true;
 
-        // Spawn the first segment UNDER the camera
-        float camX = 0f;
-        if (Camera.main != null)
-            camX = Camera.main.transform.position.x;
-
+        float camX = Camera.main ? Camera.main.transform.position.x : 0f;
         float firstX = camX;
+
+        // guaranteed first segment
         SpawnFirstSegment(firstX);
 
+        // fill ahead
         for (int i = 1; i <= segmentsAhead; i++)
         {
             float x = firstX + i * segmentWidth;
@@ -93,26 +116,51 @@ public class TunnelSpawner : MonoBehaviour
     public void ClearAll()
     {
         foreach (var seg in activeSegments)
-        {
-            if (seg != null) Destroy(seg);
-        }
+            if (seg != null) Recycle(seg);
 
         activeSegments.Clear();
         tailSegment = null;
         isSpawning = false;
     }
 
+    // --- Unified Pool Helpers ----
+
+    GameObject GetFromPool(GameObject prefab, Vector3 pos)
+    {
+        GameObject inst;
+
+        if (pool.Count > 0)
+        {
+            inst = pool.Dequeue();
+            inst.transform.position = pos;
+            inst.transform.rotation = Quaternion.identity;
+            inst.SetActive(true);
+        }
+        else
+        {
+            inst = Instantiate(prefab, pos, Quaternion.identity, transform);
+        }
+
+        return inst;
+    }
+
+    void Recycle(GameObject seg)
+    {
+        seg.SetActive(false);
+        pool.Enqueue(seg);
+    }
+
+    // --- Spawn Logic ----
+
     void SpawnFirstSegment(float x)
     {
         if (firstSegmentPrefab == null)
         {
-            Debug.LogWarning("TunnelSpawner: No firstSegmentPrefab assigned!");
+            Debug.LogWarning("TunnelSpawner missing firstSegmentPrefab!");
             return;
         }
 
-        var seg = Instantiate(firstSegmentPrefab, new Vector3(x, 0f, 0f), Quaternion.identity, transform);
-        if (seg == null) return;
-
+        var seg = GetFromPool(firstSegmentPrefab, new Vector3(x, 0f, 0f));
         activeSegments.Enqueue(seg);
         tailSegment = seg;
     }
@@ -121,15 +169,13 @@ public class TunnelSpawner : MonoBehaviour
     {
         if (segmentPrefabs == null || segmentPrefabs.Count == 0)
         {
-            Debug.LogError("TunnelSpawner: No segmentPrefabs assigned.");
+            Debug.LogError("TunnelSpawner: segmentPrefabs is empty.");
             return;
         }
 
         GameObject prefab = segmentPrefabs[Random.Range(0, segmentPrefabs.Count)];
-        var seg = Instantiate(prefab, new Vector3(x, 0f, 0f), Quaternion.identity, transform);
 
-        if (seg == null) return;
-
+        var seg = GetFromPool(prefab, new Vector3(x, 0f, 0f));
         activeSegments.Enqueue(seg);
         tailSegment = seg;
     }

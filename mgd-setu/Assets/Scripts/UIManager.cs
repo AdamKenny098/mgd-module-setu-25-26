@@ -87,11 +87,38 @@ public class UIManager : MonoBehaviour
         if (pauseMenu != null) pauseMenu.SetActive(false);
         if (infoPanel != null) infoPanel.SetActive(false);
 
+        // We don’t unpause here; tutorial may pause first
         Time.timeScale = 1f;
 
-        if (GameManager.Instance != null)
-            GameManager.Instance.StartRun();
+        // Ask Tutorial to show first
+        if (TutorialManager.Instance != null)
+        {
+            TutorialManager.Instance.ShowTutorialIfNeeded();
+
+            // Only start the run immediately if tutorial has already been seen
+            // (i.e., panel didn’t show)
+            if (TutorialManager.Instance != null &&
+                TutorialManager.Instance.gameObject.activeInHierarchy &&
+                TutorialManager.Instance.tutorialPanel != null &&
+                TutorialManager.Instance.tutorialPanel.activeSelf)
+            {
+                // Run will effectively start when player presses "Got it" (we just unpause)
+                if (GameManager.Instance != null)
+                    GameManager.Instance.StartRun();
+            }
+            else
+            {
+                if (GameManager.Instance != null)
+                    GameManager.Instance.StartRun();
+            }
+        }
+        else
+        {
+            if (GameManager.Instance != null)
+                GameManager.Instance.StartRun();
+        }
     }
+
 
     public void TogglePause()
     {

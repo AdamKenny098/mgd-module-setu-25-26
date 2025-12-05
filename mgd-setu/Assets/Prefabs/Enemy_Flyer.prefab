@@ -198,5 +198,5 @@ MonoBehaviour:
   hoverSpeed: 3
   moveSpeed: 1.5
   projectilePrefab: {fileID: 5392257915661434075, guid: ba9e795658b07b5468bef09d44a9d7ff, type: 3}
-  fireInterval: 2
+  fireInterval: 5
   detectionRange: 10

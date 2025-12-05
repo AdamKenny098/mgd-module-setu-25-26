@@ -96,35 +96,6 @@ public class EnemyKamikaze : MonoBehaviour, IMagnetic
             Destroy(explosion, 1.5f);
         }
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 3f);
-        foreach (var hit in hits)
-        {
-            if (hit.GetComponent<BossBombFactory>())
-            {
-                hit.GetComponent<BossBombFactory>().NotifyExplosion(transform.position);
-                continue;
-            }
-
-
-            if (hit.CompareTag("Enemy") || hit.CompareTag("EnemyProjectile"))
-            {
-                // If it's a brute, ignore damage
-                if (hit.GetComponent<EnemyBrute>() != null)
-                {
-                    // Brutes do not take projectile damage
-                    Destroy(gameObject); // projectile dies but brute lives
-                    return;
-                }
-
-                Destroy(hit.gameObject);
-                continue;
-            }
-
-            Rigidbody2D body = hit.attachedRigidbody;
-            if (body != null && body != rb)
-                body.AddForce((body.position - (Vector2)transform.position).normalized * explosionForce, ForceMode2D.Impulse);
-        }
-
         Destroy(gameObject);
     }
 }

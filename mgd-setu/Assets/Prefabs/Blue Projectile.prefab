@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticProjectile
   source: 1
-  speed: 10
+  speed: 7
   damage: 10
   lifeTime: 4
   canBeReflected: 1

@@ -1,131 +1,117 @@
 # Ironhollow
+A 2D magnetic survival game built in Unity for Mobile Game Development 2025/2026.
 
-A 2D magnetic survival game built in Unity for Mobile Game Development 2025/2026.  
-Ironhollow explores polarity-based movement, magnetic physics, and minimalist industrial design.
+Ironhollow is a fast-paced polarity-based survival runner set inside a collapsing underground facility.
+The player flips magnetic polarity to attract to or repel from metal surfaces, navigating increasingly dangerous tunnels while avoiding hazards and managing moment-to-moment movement decisions.
+
+This project demonstrates strong technical design, efficient 2D physics behaviour, mobile optimisation, and system-driven gameplay.
 
 ---
 
 ## Overview
 
-**Ironhollow** is a one-mechanic 2D action platformer where players use magnetic polarity to navigate a collapsing underground facility.  
-With every tap, polarity flips — changing whether the player is drawn toward or repelled from nearby metal surfaces.
+Ironhollow centres around a single, expressive mechanic: magnetic polarity.
+Every tap flips the player between red and blue states, directly affecting movement, boosts, and hazard interaction.
 
-The game emphasizes **responsive control**, **performance optimization**, and **system-driven gameplay** rather than graphical complexity.  
-It was designed to demonstrate strong technical design, reliable physics behavior, and scalable system architecture for mobile and desktop.
+Post-CA3 development focused on stability, onboarding, lifecycle correctness, performance improvement, and the architectural changes needed to turn the CA2 prototype into a polished mobile-ready vertical slice.
 
 ---
 
 ## Key Features
 
-- **Magnetic Polarity System:**  
-  Flip between red and blue charges to attract towards similar and repel agains opposing surfaces.
+- **Magnetic Polarity System**  
+  Flip between polarities to attract to or repel from nearby metal surfaces.
 
-- **Reactive Physics:**  
-  Dynamic 2D forces determine player motion, enemy AI behavior, and environmental hazards.
+- **Responsive Magnetic Physics**  
+  Smooth boosts, redirection, and wall interactions driven by dynamic magnetic forces.
 
-- **Procedural Level Stitching:**  
-  The world extends dynamically as new tunnel segments spawn during gameplay.
+- **Procedural Tunnel Generation**  
+  Pooled segments create an endless run without stutter or memory spikes.
 
-- **Kamikaze AI Enemies:**  
-  Polarity-sensitive dashing enemies that react to player state.
+- **Tuned Hazards & Magnetic Enemies**  
+  Includes six types of foes along with a boss battle, stationary emitters, and ranged hazards with clear telegraphs.
 
-- **Fully Functional UI:**  
-  Main menu, in-game HUD, pause/resume system, and responsive mobile touch interface.
+- **Mobile-Optimised UI**  
+  First-run tutorial, pause/resume, safe-area support, and scalable HUD.
 
-- **Optimized for Android:**  
-  Stable 60 FPS on mid-range devices with lightweight draw calls and low memory use.
-
----
-
-## Development Philosophy
-
-Ironhollow was developed as a **system-first project** — prioritizing physics accuracy, modular code, and efficient runtime behavior.  
-It serves as a demonstration of modern Unity best practices for small-scale but technically rich 2D projects.
-
-All gameplay systems were built from scratch without third-party plugins, relying solely on:
-- Unity’s **Input System** for cross-platform control
-- **URP (2D Renderer)** for efficiency and visual clarity
-- **ScriptableObject**-based data for scalability and ease of iteration
-- **TextMeshPro** for responsive UI
+- **Performance-Focused Architecture**  
+  Zero allocations in gameplay, stable 60 FPS on mid-range Android hardware.
 
 ---
 
 ## Technical Breakdown
 
-| Component | Description |
-|------------|--------------|
-| **Engine** | Unity 6.2 (URP, 2D) |
-| **Language** | C# |
-| **Platform** | Android (IL2CPP, ARM64), PC |
-| **Architecture** | Entity-driven MonoBehaviour system |
-| **Input Handling** | Unity Input System |
-| **Persistence** | PlayerPrefs (local) |
-| **Frame Target** | 60 FPS |
-| **Build Size** | <150 MB (Release) |
-| **Camera System** | Cinemachine Virtual Camera (Framing Transposer) |
+| Component | Details |
+|----------|---------|
+| Engine | Unity 6.2 (URP 2D Renderer) |
+| Language | C# |
+| Platform | Android (IL2CPP, ARM64) and PC |
+| Architecture | Scrolling world + pooled procedural generation |
+| Input | Unity Input System (touch controls) |
+| Camera | Cinemachine (Framing Transposer) |
+| Persistence | PlayerPrefs (run summary) |
+| Target Frame Rate | 60 FPS |
+| Build Size | <150 MB |
 
 ---
 
 ## Core Systems
 
-| System | Responsibility |
-|---------|----------------|
-| **PlayerMagnetController** | Handles player movement, magnetic interactions, and polarity flips |
-| **EnemyMagnetController** | Governs stationary magnetic enemies and their reactions |
-| **EnemyKamikaze** | Controls pursuit AI and explosive behavior |
-| **GameManager** | Global state management (pause, restart, scene flow) |
-| **UIManager** | Manages menus, HUD, and user interaction flow |
-| **TunnelSpawner** | Dynamically generates procedural tunnel sections |
-| **TelemetryManager** | Logs gameplay events (session start, deaths, progress) |
+| System | Purpose |
+|--------|---------|
+| PlayerMagnetController | Controls player motion and magnetic interactions |
+| StaticMagneticEmitters | Area-based influence on player polarity |
+| TunnelSpawner | Fully pooled segment generation (no Instantiates during gameplay) |
+| GameManager | Handles pause, restart, state transitions, lifecycle recovery |
+| UIManager | Menus, HUD, scaling, and general UI flow |
+| TutorialManager | First-run contextual onboarding |
 
 ---
 
 ## Performance & Optimization
 
-Ironhollow’s systems are optimized to maintain consistent frame-times across mobile hardware:
+Final CA3 profiling results:
 
-- Cached all component lookups (`FindFirstObjectByType` replaced by lazy initialization)
-- Reduced per-frame memory allocations to under **400 B/frame**
-- Batched all static geometry and sprites under shared materials
-- Minimized physics overhead by limiting magnetic detection to `LayerMask` filters
-- Verified stable **~3.3 ms CPU frame time** and **1.1 ms GPU time** under Unity Profiler
+- Zero per-frame allocations in gameplay  
+- Stable frame pacing on mid-range Android devices  
+- Magnetic force calculations optimised with cached masks and squared magnitude checks  
+- Reduced overdraw from simplified sprites and limited particle usage  
+- Physics queries restricted to specific layers for efficiency  
+- CPU frame time: ~3.0–3.5 ms  
+- GPU frame time: ~1.0 ms  
+
+These improvements were validated using Unity Profiler with custom ProfilerMarkers.
 
 ---
 
 ## Visual Direction
 
-- Industrial minimalism inspired by decaying machinery and magnetic resonance imagery  
-- 2D parallax layers for depth and spatial context  
-- Color as feedback — red and blue instantly communicate polarity state  
-- Emphasis on silhouette and feedback clarity for mobile readability  
-
----
-
-## Audio Design
-
-N/A see next build
+- Industrial minimalism and decaying machinery motifs  
+- Red/blue colour language for instant polarity readability  
+- High-contrast silhouettes for hazard clarity on mobile  
+- Controlled use of parallax for depth without visual clutter  
 
 ---
 
 ## Development History
 
-**Initial Concept:**  
-Born as a prototype for demonstrating custom magnetic force calculations in Unity.  
+Ironhollow began as a physics prototype demonstrating magnetic force calculations.
+Throughout CA2 and CA3, the project evolved significantly:
 
-**Progression:**  
-- Core polarity and movement systems implemented first.  
-- Enemy AI and environmental hazards added next.  
-- Procedural generation, UI systems, and Android lifecycle polish completed last.  
+- Added object pooling to eliminate runtime allocations  
+- Redesigned architecture to keep the world centred on origin (fixing camera drift)  
+- Added onboarding and tutorial flow  
+- Implemented correct Android lifecycle handling  
+- Tuned hazard difficulty curve and projectile speeds  
+- Improved UI scaling and readability  
+- Added persistent run summary  
+- Conducted an 11-player playtest and applied feedback-driven changes  
 
-**Goal:**  
-Deliver a high-performance, low-overhead 2D vertical slice that could evolve into a full indie release with additional levels and progression systems.
-
----
-
-## Future Plans
-
-- Introduce boss encounters using polarity-based puzzles
-- Introduce more enemy and hazard types
-- Integrate persistent save data and difficulty scaling ?
+Ironhollow now represents a stable, polished 2D vertical slice demonstrating modern Unity mobile development techniques.
 
 ---
+
+## Status
+
+**Ironhollow – CA3 Version: Complete**  
+A technically stable, well-optimised mobile-ready vertical slice showcasing a unique polarity movement system and robust CA3 implementation.
